@@ -9,6 +9,9 @@ import com.zola.invoices.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 public class InvoiceController {
 
@@ -18,15 +21,33 @@ public class InvoiceController {
     private InvoiceService invoiceService;
 
     @PostMapping(path = INVOICE_MAPPING + "/invoices", consumes = "application/json", produces = "application/json")
-    public String index(@RequestBody InvoiceCall invoiceCall) throws JsonProcessingException {
+    public String createInvoice(@RequestBody InvoiceCall invoiceCall) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-
         InvoiceEntity invoiceEntity = mapInvoiceCallToInvoiceEntity(invoiceCall);
         InvoiceEntity saveResult = invoiceService.saveInvoice(invoiceEntity);
-
         InvoiceResponse invoiceResponse = mapInvoiceEntityToInvoiceResponse(saveResult);
-
         return mapper.writeValueAsString(invoiceResponse);
+    }
+
+    @GetMapping(path = INVOICE_MAPPING + "/invoices", produces = "application/json")
+    public String getInvoicesByInvoiceNumber(@RequestParam(name = "invoiceNumber") String invoiceNumber) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByInvoiceNumber(invoiceNumber)
+                .stream()
+                .map(this::mapInvoiceEntityToInvoiceResponse)
+                .collect(Collectors.toList());
+        return mapper.writeValueAsString(invoiceResults);
+    }
+
+    //TODO: Merge the two get mapping together
+    @GetMapping(path = INVOICE_MAPPING + "/invoicesByPoNumber", produces = "application/json")
+    public String getInvoicesByPoNumber(@RequestParam(name = "poNumber") String poNumber) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByPoNumber(poNumber)
+                .stream()
+                .map(this::mapInvoiceEntityToInvoiceResponse)
+                .collect(Collectors.toList());
+        return mapper.writeValueAsString(invoiceResults);
     }
 
     private InvoiceEntity mapInvoiceCallToInvoiceEntity(InvoiceCall invoiceCall) {
