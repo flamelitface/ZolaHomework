@@ -5,7 +5,9 @@ import java.sql.Date;
 import java.time.Instant;
 
 @Entity
-@Table(name = "InvoiceCall")
+@Table(name = "Invoice",
+        indexes = {@Index(name = "idx_invoice_number", columnList = "invoice_number"),
+                   @Index(name = "idx_po_number", columnList = "po_number")})
 public class InvoiceEntity {
     @Id
     @GeneratedValue
@@ -24,7 +26,7 @@ public class InvoiceEntity {
     private Long amountCents;
 
     @Column(name = "created_at")
-    private Instant created_at = Instant.now();
+    private Instant createdAt = Instant.now();
 
     public Integer getId() {
         return id;
@@ -62,8 +64,8 @@ public class InvoiceEntity {
         this.amountCents = amountCents;
     }
 
-    public Instant getCreated_at() {
-        return created_at;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
 }

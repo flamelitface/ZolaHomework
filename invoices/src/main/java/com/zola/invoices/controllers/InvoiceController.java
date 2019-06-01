@@ -7,6 +7,7 @@ import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
 import com.zola.invoices.entities.InvoiceEntity;
 import com.zola.invoices.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 public class InvoiceController {
 
     private final String INVOICE_MAPPING = "/v1";
+    private final String DEFAULT_OFFSET = "0";
+    private final String DEFAULT_LIMIT = "10";
 
     @Autowired
     private InvoiceService invoiceService;
@@ -30,9 +33,12 @@ public class InvoiceController {
     }
 
     @GetMapping(path = INVOICE_MAPPING + "/invoices", produces = "application/json")
-    public String getInvoicesByInvoiceNumber(@RequestParam(name = "invoiceNumber") String invoiceNumber) throws JsonProcessingException {
+    public String getInvoicesByInvoiceNumber(
+            @RequestParam(name = "invoiceNumber", required = false) String invoiceNumber,
+            @RequestParam(name = "offset", defaultValue = DEFAULT_OFFSET) int offset,
+            @RequestParam(name = "limit", defaultValue = DEFAULT_LIMIT) int limit) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByInvoiceNumber(invoiceNumber)
+        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByInvoiceNumber(invoiceNumber, offset, limit)
                 .stream()
                 .map(this::mapInvoiceEntityToInvoiceResponse)
                 .collect(Collectors.toList());
@@ -43,7 +49,7 @@ public class InvoiceController {
     @GetMapping(path = INVOICE_MAPPING + "/invoicesByPoNumber", produces = "application/json")
     public String getInvoicesByPoNumber(@RequestParam(name = "poNumber") String poNumber) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByPoNumber(poNumber)
+        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByPoNumber(poNumber, 0, 1)
                 .stream()
                 .map(this::mapInvoiceEntityToInvoiceResponse)
                 .collect(Collectors.toList());
@@ -66,7 +72,7 @@ public class InvoiceController {
         invoiceResponse.setPo_number(invoiceEntity.getPoNumber());
         invoiceResponse.setDue_date(invoiceEntity.getDueDate().toString());
         invoiceResponse.setAmount_cents(invoiceEntity.getAmountCents());
-        invoiceResponse.setCreated_at(invoiceEntity.getCreated_at().toString());
+        invoiceResponse.setCreated_at(invoiceEntity.getCreatedAt().toString());
         return invoiceResponse;
     }
 }
