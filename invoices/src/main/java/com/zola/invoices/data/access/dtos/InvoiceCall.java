@@ -3,22 +3,12 @@ package com.zola.invoices.data.access.dtos;
 import java.sql.Date;
 import java.time.Instant;
 
-public class Invoice {
+public class InvoiceCall {
 
-    private Integer id;
     private String invoice_number;
     private String po_number;
     private Date due_date;
     private Long amount_cents;
-    private Instant created_at;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getInvoice_number() {
         return invoice_number;
@@ -49,14 +39,6 @@ public class Invoice {
 
     public void setAmount_cents(Long amount_cents) {
         this.amount_cents = amount_cents;
-    }
-
-    public Instant getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Instant created_at) {
-        this.created_at = created_at;
     }
 
 }
