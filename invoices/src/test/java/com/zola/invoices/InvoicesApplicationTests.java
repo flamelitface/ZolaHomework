@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zola.invoices.data.access.dtos.calls.InvoiceCall;
 import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
+import com.zola.invoices.util.InvoiceAPIUtil;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,19 +46,26 @@ public class InvoicesApplicationTests {
 
 	private final ObjectMapper mapper = new ObjectMapper();
 
+	private InvoiceAPIUtil invoiceApiUtil = new InvoiceAPIUtil(restTemplate, port, mapper);
+
+	@Before
+	public void init() {
+		invoiceApiUtil = new InvoiceAPIUtil(restTemplate, port, mapper);
+	}
+
 	@Test
 	public void runIntegrationTest() throws IOException {
 		// Ideally the database would be cleaned up in between each test once a delete operation is implemented.
 		// This way these tests wouldn't need to be run in a certain order.
-		populateDatabase();
+		invoiceApiUtil.populateDatabase(100, 200);
 		testMultipleInvoicesCreationWithDefaults();
 		testMultipleInvoicesCreationWithOffsetAndLimit();
 		testSingleInvoiceCreation();
 	}
 
 	public void testMultipleInvoicesCreationWithDefaults() throws IOException {
-		List<InvoiceResponse> invoiceNumberResultsWithDefaultOffsetAndLimit = getInvoice(INVOICE_BY_INVOICE_NUMBER, "staticInvoice", null, null);
-		List<InvoiceResponse> poNumberResultWithDefaultOffSetAndLimit = getInvoice(INVOICE_BY_PO_NUMBER_ENDPOINT, "staticPoNumber", null, null);
+		List<InvoiceResponse> invoiceNumberResultsWithDefaultOffsetAndLimit = invoiceApiUtil.getInvoice(INVOICE_BY_INVOICE_NUMBER, "staticInvoice", null, null);
+		List<InvoiceResponse> poNumberResultWithDefaultOffSetAndLimit = invoiceApiUtil.getInvoice(INVOICE_BY_PO_NUMBER_ENDPOINT, "staticPoNumber", null, null);
 
 		assertEquals(10, invoiceNumberResultsWithDefaultOffsetAndLimit.size());
 		assertEquals(10, poNumberResultWithDefaultOffSetAndLimit.size());
@@ -68,13 +77,13 @@ public class InvoicesApplicationTests {
 	}
 
 	public void testMultipleInvoicesCreationWithOffsetAndLimit() throws IOException {
-		List<InvoiceResponse> invoiceNumberResultsWithDefaultOffsetAndLimit = getInvoice(INVOICE_BY_INVOICE_NUMBER, "staticInvoice", 1, 150);
+		List<InvoiceResponse> invoiceNumberResultsWithDefaultOffsetAndLimit = invoiceApiUtil.getInvoice(INVOICE_BY_INVOICE_NUMBER, "staticInvoice", 1, 150);
 		assertEquals(50, invoiceNumberResultsWithDefaultOffsetAndLimit.size());
 		assertEquals(Integer.valueOf(150), invoiceNumberResultsWithDefaultOffsetAndLimit.get(0).getId());
 		assertEquals(Integer.valueOf(101), invoiceNumberResultsWithDefaultOffsetAndLimit.get(49).getId());
 
 
-		List<InvoiceResponse> poNumberResultWithDefaultOffSetAndLimit = getInvoice(INVOICE_BY_PO_NUMBER_ENDPOINT, "staticPoNumber", 5, 5);
+		List<InvoiceResponse> poNumberResultWithDefaultOffSetAndLimit = invoiceApiUtil.getInvoice(INVOICE_BY_PO_NUMBER_ENDPOINT, "staticPoNumber", 5, 5);
 		assertEquals(5, poNumberResultWithDefaultOffSetAndLimit.size());
 		assertEquals(Integer.valueOf(75), poNumberResultWithDefaultOffSetAndLimit.get(0).getId());
 		assertEquals(Integer.valueOf(71), poNumberResultWithDefaultOffSetAndLimit.get(4).getId());
@@ -90,7 +99,7 @@ public class InvoicesApplicationTests {
 
 		ObjectMapper mapper = new ObjectMapper();
 
-		String postResult = postInvoice(invoiceCall);
+		String postResult = invoiceApiUtil.postInvoice(invoiceCall);
 		InvoiceResponse response = mapper.readValue(postResult, InvoiceResponse.class);
 
 		assertEquals(Integer.valueOf(301), response.getId());
@@ -104,45 +113,4 @@ public class InvoicesApplicationTests {
 		assertTrue("Creation time is after test start time", creationTime.isAfter(startTestTime));
 		assertTrue("Creation time is before test end time", creationTime.isBefore(endTestTime));
 	}
-
-	private List<InvoiceResponse> getInvoice(String endpoint, String number, Integer offset, Integer limit) throws IOException {
-		StringBuilder builder = new StringBuilder(number);
-
-		if(offset != null) {
-			builder.append("&offset=" + offset);
-		}
-		if(limit != null) {
-			builder.append("&limit=" + limit);
-		}
-
-		String endpointQueryString = builder.toString();
-
-		String result = restTemplate.getForObject("http://localhost:" + port + endpoint + endpointQueryString, String.class);
-		return mapper.readValue(result, new TypeReference<List<InvoiceResponse>>(){});
-	}
-
-	private void populateDatabase() {
-		for(int i = 0 ; i < 100; i++) {
-			postInvoice("invoice" + i, "staticPoNumber", 12333L, LocalDate.of(2019, 1, 1));
-		}
-
-		for(int i = 0 ; i < 200; i++) {
-			postInvoice("staticInvoice", "po" + i, 12333L, LocalDate.of(2019, 1, 1));
-		}
-	}
-
-	private String postInvoice(String invoiceNumber, String poNumber, Long amountInCents, LocalDate localDate) {
-		InvoiceCall invoiceCall = new InvoiceCall();
-		invoiceCall.setInvoice_number(invoiceNumber);
-		invoiceCall.setPo_number(poNumber);
-		invoiceCall.setAmount_cents(amountInCents);
-		invoiceCall.setDue_date(Date.valueOf(localDate));
-
-		return postInvoice(invoiceCall);
-	}
-
-	private String postInvoice(InvoiceCall invoiceCall) {
-		return restTemplate.postForObject("http://localhost:" + port + INVOICE_ENDPOINT, invoiceCall, String.class);
-	}
-
 }

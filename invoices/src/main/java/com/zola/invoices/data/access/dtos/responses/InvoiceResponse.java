@@ -1,9 +1,5 @@
 package com.zola.invoices.data.access.dtos.responses;
 
-
-import java.sql.Date;
-import java.time.Instant;
-
 public class InvoiceResponse {
 
     private Integer id;

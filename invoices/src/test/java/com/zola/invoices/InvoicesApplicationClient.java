@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zola.invoices.data.access.dtos.calls.InvoiceCall;
 import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
+import com.zola.invoices.util.InvoiceAPIUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,73 +35,29 @@ public class InvoicesApplicationClient {
 
 	private static RestTemplate restTemplate = new RestTemplate();
 
-	private final static String INVOICE_ENDPOINT = "/v1/invoices";
-
 	private final static String INVOICE_BY_INVOICE_NUMBER = "/v1/invoices?invoiceNumber=";
 
 	private final static String INVOICE_BY_PO_NUMBER_ENDPOINT = "/v1/invoicesByPoNumber?poNumber=";
-
-	private final static LocalDateTime startTestTime = LocalDateTime.now(ZoneId.of("UTC"));
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws IOException {
 		Logger logger = Logger.getLogger("System Logger");
+		InvoiceAPIUtil invoiceApiUtil = new InvoiceAPIUtil(restTemplate, port, mapper);
 
 		//Uncomment this if you want to generate some data
-		//populateDatabase();
+//		invoiceApiUtil.populateDatabase(10000, 50000);
 
 		// Uncomment this and modify as you like to create an invoice
-		//String postResult = postInvoice("invoiceNumber", "poNumber", 12333L, LocalDate.of(2019, 1, 1));
-		//logger.log(Level.INFO, postResult);
+//		String postResult = invoiceApiUtil.postInvoice("invoiceNumber", "poNumber", 12333L, LocalDate.of(2019, 1, 1));
+//		logger.log(Level.INFO, postResult);
 
-		// Uncomment this to search for invoices by invoice number. You can set limit and offset here.
-		//String getResultByInvoiceNumber = mapper.writeValueAsString(getInvoice(INVOICE_BY_INVOICE_NUMBER, "invoiceNumber", null, null));
-		//logger.log(Level.INFO, getResultByInvoiceNumber);
+		// Uncomment this to search for invoices by invoice number. You can set limit and offset here (optional).
+//		String getResultByInvoiceNumber = mapper.writeValueAsString(invoiceApiUtil.getInvoice(INVOICE_BY_INVOICE_NUMBER, "staticInvoice", 0, 10000));
+//		logger.log(Level.INFO, getResultByInvoiceNumber);
 
-		//Uncomment this to search for invoices by poNumber. You can set limit and offset here.
-		//String getResultByPoNumber = mapper.writeValueAsString(getInvoice(INVOICE_BY_PO_NUMBER_ENDPOINT, "poNumber", null, null));
-		//logger.log(Level.INFO, getResultByPoNumber);
+		// Uncomment this to search for invoices by poNumber. You can set limit and offset here (optional).
+//		String getResultByPoNumber = mapper.writeValueAsString(invoiceApiUtil.getInvoice(INVOICE_BY_PO_NUMBER_ENDPOINT, "staticPoNumber", null, null));
+//		logger.log(Level.INFO, getResultByPoNumber);
 	}
-
-	private static List<InvoiceResponse> getInvoice(String endpoint, String number, Integer offset, Integer limit) throws IOException {
-		StringBuilder builder = new StringBuilder(number);
-
-		if(offset != null) {
-			builder.append("&offset=" + offset);
-		}
-		if(limit != null) {
-			builder.append("&limit=" + limit);
-		}
-
-		String endpointQueryString = builder.toString();
-
-		String result = restTemplate.getForObject("http://localhost:" + port + endpoint + endpointQueryString, String.class);
-		return mapper.readValue(result, new TypeReference<List<InvoiceResponse>>(){});
-	}
-
-	private static void populateDatabase() {
-		for(int i = 0 ; i < 100; i++) {
-			postInvoice("invoice" + i, "staticPoNumber", 12333L, LocalDate.of(2019, 1, 1));
-		}
-
-		for(int i = 0 ; i < 200; i++) {
-			postInvoice("staticInvoice", "po" + i, 12333L, LocalDate.of(2019, 1, 1));
-		}
-	}
-
-	private static String postInvoice(String invoiceNumber, String poNumber, Long amountInCents, LocalDate localDate) {
-		InvoiceCall invoiceCall = new InvoiceCall();
-		invoiceCall.setInvoice_number(invoiceNumber);
-		invoiceCall.setPo_number(poNumber);
-		invoiceCall.setAmount_cents(amountInCents);
-		invoiceCall.setDue_date(Date.valueOf(localDate));
-
-		return postInvoice(invoiceCall);
-	}
-
-	private static String postInvoice(InvoiceCall invoiceCall) {
-		return restTemplate.postForObject("http://localhost:" + port + INVOICE_ENDPOINT, invoiceCall, String.class);
-	}
-
 }
