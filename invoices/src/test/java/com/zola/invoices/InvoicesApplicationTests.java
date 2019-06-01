@@ -36,8 +36,6 @@ public class InvoicesApplicationTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
-	private final String INVOICE_ENDPOINT = "/v1/invoices";
-
 	private final String INVOICE_BY_INVOICE_NUMBER = "/v1/invoices?invoiceNumber=";
 
 	private final String INVOICE_BY_PO_NUMBER_ENDPOINT = "/v1/invoicesByPoNumber?poNumber=";
