@@ -2,9 +2,9 @@ package com.zola.invoices.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zola.invoices.data.access.dtos.InvoiceCall;
+import com.zola.invoices.data.access.dtos.calls.InvoiceCall;
 import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
-import com.zola.invoices.entities.InvoiceEntity;
+import com.zola.invoices.data.access.entities.InvoiceEntity;
 import com.zola.invoices.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

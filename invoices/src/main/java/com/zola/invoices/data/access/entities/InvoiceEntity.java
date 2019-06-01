@@ -1,4 +1,4 @@
-package com.zola.invoices.entities;
+package com.zola.invoices.data.access.entities;
 
 import javax.persistence.*;
 import java.sql.Date;

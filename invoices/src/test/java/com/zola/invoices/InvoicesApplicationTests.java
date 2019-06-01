@@ -2,7 +2,7 @@ package com.zola.invoices;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zola.invoices.data.access.dtos.InvoiceCall;
+import com.zola.invoices.data.access.dtos.calls.InvoiceCall;
 import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,11 +40,9 @@ public class InvoicesApplicationTests {
 
 	private final String INVOICE_BY_PO_NUMBER_ENDPOINT = "/v1/invoicesByPoNumber?poNumber=";
 
-	private final Date date = Date.valueOf(LocalDate.now());
-
 	private final LocalDateTime startTestTime = LocalDateTime.now(ZoneId.of("UTC"));
 
-	ObjectMapper mapper = new ObjectMapper();
+	private final ObjectMapper mapper = new ObjectMapper();
 
 	@Test
 	public void runIntegrationTest() throws IOException {

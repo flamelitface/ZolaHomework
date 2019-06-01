@@ -1,4 +1,4 @@
-package com.zola.invoices.data.access.dtos;
+package com.zola.invoices.data.access.dtos.calls;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

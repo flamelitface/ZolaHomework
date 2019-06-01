@@ -1,7 +1,7 @@
 package com.zola.invoices.services;
 
-import com.zola.invoices.data.access.InvoiceDAO;
-import com.zola.invoices.entities.InvoiceEntity;
+import com.zola.invoices.data.access.dao.InvoiceDAO;
+import com.zola.invoices.data.access.entities.InvoiceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
