@@ -7,7 +7,6 @@ import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
 import com.zola.invoices.entities.InvoiceEntity;
 import com.zola.invoices.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,11 +44,12 @@ public class InvoiceController {
         return mapper.writeValueAsString(invoiceResults);
     }
 
-    //TODO: Merge the two get mapping together
     @GetMapping(path = INVOICE_MAPPING + "/invoicesByPoNumber", produces = "application/json")
-    public String getInvoicesByPoNumber(@RequestParam(name = "poNumber") String poNumber) throws JsonProcessingException {
+    public String getInvoicesByPoNumber(@RequestParam(name = "poNumber") String poNumber,
+                                        @RequestParam(name = "offset", defaultValue = DEFAULT_OFFSET) int offset,
+                                        @RequestParam(name = "limit", defaultValue = DEFAULT_LIMIT) int limit) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByPoNumber(poNumber, 0, 1)
+        List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByPoNumber(poNumber, offset, limit)
                 .stream()
                 .map(this::mapInvoiceEntityToInvoiceResponse)
                 .collect(Collectors.toList());

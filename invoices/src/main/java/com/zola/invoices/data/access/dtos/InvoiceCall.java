@@ -1,7 +1,8 @@
 package com.zola.invoices.data.access.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.sql.Date;
-import java.time.Instant;
 
 public class InvoiceCall {
 
@@ -29,6 +30,7 @@ public class InvoiceCall {
         return due_date;
     }
 
+    @JsonFormat(shape= JsonFormat.Shape.STRING, timezone="EST")
     public void setDue_date(Date due_date) {
         this.due_date = due_date;
     }
