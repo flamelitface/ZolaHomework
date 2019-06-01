@@ -22,9 +22,11 @@ public class InvoiceController {
     @Autowired
     private InvoiceService invoiceService;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     @PostMapping(path = INVOICE_MAPPING + "/invoices", consumes = "application/json", produces = "application/json")
     public String createInvoice(@RequestBody InvoiceCall invoiceCall) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         InvoiceEntity invoiceEntity = mapInvoiceCallToInvoiceEntity(invoiceCall);
         InvoiceEntity saveResult = invoiceService.saveInvoice(invoiceEntity);
         InvoiceResponse invoiceResponse = mapInvoiceEntityToInvoiceResponse(saveResult);
@@ -36,7 +38,6 @@ public class InvoiceController {
             @RequestParam(name = "invoiceNumber", required = false) String invoiceNumber,
             @RequestParam(name = "offset", defaultValue = DEFAULT_OFFSET) int offset,
             @RequestParam(name = "limit", defaultValue = DEFAULT_LIMIT) int limit) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByInvoiceNumber(invoiceNumber, offset, limit)
                 .stream()
                 .map(this::mapInvoiceEntityToInvoiceResponse)
@@ -48,7 +49,6 @@ public class InvoiceController {
     public String getInvoicesByPoNumber(@RequestParam(name = "poNumber") String poNumber,
                                         @RequestParam(name = "offset", defaultValue = DEFAULT_OFFSET) int offset,
                                         @RequestParam(name = "limit", defaultValue = DEFAULT_LIMIT) int limit) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         List<InvoiceResponse> invoiceResults = invoiceService.getInvoicesByPoNumber(poNumber, offset, limit)
                 .stream()
                 .map(this::mapInvoiceEntityToInvoiceResponse)
