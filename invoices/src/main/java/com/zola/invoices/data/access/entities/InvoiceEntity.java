@@ -3,6 +3,7 @@ package com.zola.invoices.data.access.entities;
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "Invoice",
@@ -26,7 +27,7 @@ public class InvoiceEntity {
     private Long amountCents;
 
     @Column(name = "created_at")
-    private Instant createdAt = Instant.now();
+    private Instant createdAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
 
     public Integer getId() {
         return id;
