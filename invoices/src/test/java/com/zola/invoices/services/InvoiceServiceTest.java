@@ -21,7 +21,6 @@ import static org.mockito.Mockito.when;
 
 public class InvoiceServiceTest {
 
-
     @Mock
     private InvoiceDAO invoiceDAO;
 
