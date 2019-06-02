@@ -38,7 +38,6 @@ public class InvoiceService {
     }
 
     private Pageable getPageableSortedByCreationTime(int offset, int limit) {
-        return PageRequest.of(offset,limit, Sort.by(CREATED_AT_COLUMN).descending());
+        return PageRequest.of(offset, limit, Sort.by(CREATED_AT_COLUMN).descending());
     }
-
 }

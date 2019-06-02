@@ -1,33 +1,13 @@
 package com.zola.invoices;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zola.invoices.data.access.dtos.calls.InvoiceCall;
-import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
 import com.zola.invoices.util.InvoiceAPIUtil;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 public class InvoicesApplicationClient {
 
@@ -45,7 +25,7 @@ public class InvoicesApplicationClient {
 		Logger logger = Logger.getLogger("System Logger");
 		InvoiceAPIUtil invoiceApiUtil = new InvoiceAPIUtil(restTemplate, port, mapper);
 
-		//Uncomment this if you want to generate some data
+		// Uncomment this if you want to generate some data
 //		invoiceApiUtil.populateDatabase(10000, 50000);
 
 		// Uncomment this and modify as you like to create an invoice
