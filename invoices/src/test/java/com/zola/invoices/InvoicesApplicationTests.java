@@ -1,6 +1,5 @@
 package com.zola.invoices;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zola.invoices.data.access.dtos.calls.InvoiceCall;
 import com.zola.invoices.data.access.dtos.responses.InvoiceResponse;
@@ -17,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

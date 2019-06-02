@@ -27,7 +27,7 @@ public class InvoiceEntity {
     private Long amountCents;
 
     @Column(name = "created_at")
-    private Instant createdAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+    private Instant createdAt = Instant.now();
 
     public Integer getId() {
         return id;
@@ -66,7 +66,7 @@ public class InvoiceEntity {
     }
 
     public Instant getCreatedAt() {
-        return createdAt;
+        return createdAt.truncatedTo(ChronoUnit.SECONDS);
     }
 
 }
